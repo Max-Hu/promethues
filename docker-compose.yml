@@ -66,9 +66,25 @@ services:
       - monitor-net
     labels:
       org.label-schema.group: "monitoring"
+      
+  black-exporter:
+    image: prom/blackbox-exporter:v0.16.0
+    container_name: blackexporter
+    volumes:
+      - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+      - ./blackbox.yml:/config/blackbox.yml
+    restart: unless-stopped
+    command:
+      - '--config.file=/config/blackbox.yml'
+    expose:
+      - 9115
+    networks:
+      - monitor-net
+    labels:
+      org.label-schema.group: "black-exporter"
 
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.39.2
+    image: google/cadvisor
     container_name: cadvisor
     volumes:
       - /:/rootfs:ro
